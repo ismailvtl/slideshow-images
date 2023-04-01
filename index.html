@@ -50,6 +50,7 @@
             0% {
                 transform: scale(1);
             }
+
             100% {
                 transform: scale(1.5);
             }
@@ -65,20 +66,20 @@
         }
 
         span.scrolltext {
-    font-size: 30px;
-    z-index: 3;
-    position: absolute;
-    text-align: center;
-    top: 50%;
-    opacity: .6;
-    font-family: 'system-ui, sans-serif';
-    left: 50%;
-    transform: translate(-50%);
-}
+            font-size: 30px;
+            z-index: 3;
+            position: absolute;
+            text-align: center;
+            top: 50%;
+            opacity: .6;
+            font-family: 'system-ui, sans-serif';
+            left: 50%;
+            transform: translate(-50%);
+        }
 
-.pause-animation {
-        animation-play-state: paused;      
-}
+        .pause-animation {
+            animation-play-state: paused;
+        }
     </style>
 </head>
 
@@ -186,107 +187,167 @@
         }
 
 
-let currentStoryIndex = 0;
-let currentImageIndex = 0;
-let isSlideshowPlaying = false;
-let slideshowInterval;
-const preloadImages = {};
-const preloadAudio = {};
+        let currentStoryIndex = 0;
+        let currentImageIndex = 0;
+        let isSlideshowPlaying = false;
+        let slideshowInterval;
+        const preloadImages = {};
+        const preloadAudio = {};
 
-function preloadImage(src) {
-  if (!preloadImages[src]) {
-    preloadImages[src] = new Image();
-    preloadImages[src].src = src;
-  }
-}
+        function preloadImage(src) {
+            if (!preloadImages[src]) {
+                preloadImages[src] = new Image();
+                preloadImages[src].src = src;
+            }
+        }
 
-function preloadAudioFile(src) {
-  if (!preloadAudio[src]) {
-    preloadAudio[src] = new Audio();
-    preloadAudio[src].src = src;
-  }
-}
+        function preloadAudioFile(src) {
+            if (!preloadAudio[src]) {
+                preloadAudio[src] = new Audio();
+                preloadAudio[src].src = src;
+            }
+        }
 
-function preloadStory(story) {
-  for (let i = 0; i < story.length; i++) {
-    preloadImage(story[i].src);
-    preloadAudioFile(story[i].audio);
-  }
-}
+        function preloadStory(story) {
+            for (let i = 0; i < story.length; i++) {
+                preloadImage(story[i].src);
+                preloadAudioFile(story[i].audio);
+            }
+        }
 
-function loadStory(storyIndex) {
-  currentStoryIndex = storyIndex;
-  currentImageIndex = 0;
-  const story = stories[`story${storyIndex + 1}`].images;
-  preloadStory(story);
-  const imageContainer = document.querySelector('.image-container');
-  const img = document.createElement('img');
-  img.src = story[0].src;
-  img.classList.add(story[0].effect);
-  imageContainer.innerHTML = '';
-  imageContainer.appendChild(img);
-  clearInterval(slideshowInterval);
-  isSlideshowPlaying = false;
-  const audio = document.querySelector('.audio');
-  audio.src = stories[`story${storyIndex + 1}`].audio;
-  audio.play();
-  preloadImage(story[1].src);
-}
+        function loadStory(storyIndex) {
+            currentStoryIndex = storyIndex;
+            currentImageIndex = 0;
+            const story = stories[`story${storyIndex + 1}`].images;
+            preloadStory(story);
+            const imageContainer = document.querySelector('.image-container');
+            const img = document.createElement('img');
+            img.src = story[0].src;
+            img.classList.add(story[0].effect);
+            imageContainer.innerHTML = '';
+            imageContainer.appendChild(img);
+            clearInterval(slideshowInterval);
+            isSlideshowPlaying = false;
+            const audio = document.querySelector('.audio');
+            audio.src = stories[`story${storyIndex + 1}`].audio;
+            audio.play();
+            preloadImage(story[1].src);
+        }
 
-function playSlideshow() {
-  isSlideshowPlaying = true;
-  const story = stories[`story${currentStoryIndex + 1}`].images;
-  currentImageIndex = 1;
-  const audio = document.querySelector('.audio');
-  audio.play();
-  slideshowInterval = setInterval(() => {
-    const imageContainer = document.querySelector('.image-container');
-    const img = document.createElement('img');
-    img.src = story[currentImageIndex].src;
-    img.classList.add(story[currentImageIndex].effect);
-    imageContainer.innerHTML = '';
-    imageContainer.appendChild(img);
-    preloadImage(story[(currentImageIndex + 1) % story.length].src);
-    currentImageIndex = (currentImageIndex + 1) % story.length;
-    if (currentImageIndex === 0) {
-      audio.src = stories[`story${currentStoryIndex + 1}`].audio;
-      audio.play();
-    }
-  }, story[currentImageIndex].duration * 1000);
-}
+        function playSlideshow() {
+            isSlideshowPlaying = true;
+            const story = stories[`story${currentStoryIndex + 1}`].images;
+            currentImageIndex = 1;
+            const audio = document.querySelector('.audio');
+            audio.play();
+            slideshowInterval = setInterval(() => {
+                const imageContainer = document.querySelector('.image-container');
+                const img = document.createElement('img');
+                img.src = story[currentImageIndex].src;
+                img.classList.add(story[currentImageIndex].effect);
+                imageContainer.innerHTML = '';
+                imageContainer.appendChild(img);
+                preloadImage(story[(currentImageIndex + 1) % story.length].src);
+                currentImageIndex = (currentImageIndex + 1) % story.length;
+                if (currentImageIndex === 0) {
+                    audio.src = stories[`story${currentStoryIndex + 1}`].audio;
+                    audio.play();
+                }
+            }, story[currentImageIndex].duration * 1000);
+        }
 
-function handleSwipeUp() {
-  const nextStoryIndex = currentStoryIndex + 1;
-  if (nextStoryIndex < Object.keys(stories).length) {
-    loadStory(nextStoryIndex);
-    playSlideshow();
-  }
-}
+        function handleSwipeUp() {
+            const nextStoryIndex = currentStoryIndex + 1;
+            if (nextStoryIndex < Object.keys(stories).length) {
+                loadStory(nextStoryIndex);
+                playSlideshow();
+            }
+        }
 
-function handleSwipeDown() {
-  const prevStoryIndex = currentStoryIndex - 1;
-  if (prevStoryIndex >= 0) {
-    loadStory(prevStoryIndex);
-    playSlideshow();
-  }
-}
+        function handleSwipeDown() {
+            const prevStoryIndex = currentStoryIndex - 1;
+            if (prevStoryIndex >= 0) {
+                loadStory(prevStoryIndex);
+                playSlideshow();
+            }
+        }
 
 
-function handleTouchStart(event) {
+      /* function handleTouchStart(event) {
+          const startY = event.touches[0].clientY;
+          event.preventDefault();
+          window.addEventListener('touchend', handleTouchEnd, { passive: false });
+        
+          function handleTouchEnd(event) {
+            const endY = event.changedTouches[0].clientY;
+            const distance = endY - startY;
+            if (distance < 0) {
+              handleSwipeUp();
+            } else {
+              handleSwipeDown();
+            }
+            window.removeEventListener('touchend', handleTouchEnd);
+          }
+        
+          const imageContainer = document.querySelector('.image-container');
+          const audio = document.querySelector('.audio');
+          const currentImage = imageContainer.querySelector('img');
+          const currentEffect = currentImage.classList[0];
+          currentImage.classList.add('pause-animation');
+          audio.pause();
+        
+          window.addEventListener('touchend', () => {
+            currentImage.classList.remove('pause-animation');
+            audio.play();
+          }, { once: true });
+        }
+
+
+
+
+        window.addEventListener('load', () => {
+            loadStory(0);
+            playSlideshow();
+            document.querySelector('.image-container img').addEventListener('animationend', () => {
+                const audio = document.querySelector('.audio');
+                audio.pause();
+                audio.currentTime = 0;
+                if (isSlideshowPlaying) {
+                    playSlideshow();
+                }
+            });
+        }, { passive: true });
+
+        window.addEventListener('touchstart', handleTouchStart, { passive: false, capture: true });
+
+        function startAudioOnInteraction() {
+            const audio = document.querySelector('.audio');
+            audio.play();
+        }*/  
+
+
+function handleTouchStart(event, tapFlag) {
   const startY = event.touches[0].clientY;
+  const touchStartTime = new Date().getTime();
+  let touchType = '';
+
   event.preventDefault();
   window.addEventListener('touchend', handleTouchEnd, { passive: false });
 
   function handleTouchEnd(event) {
-    const endY = event.changedTouches[0].clientY;
-    const distance = endY - startY;
-    if (distance < 0) {
-      handleSwipeUp();
-    } else {
-      handleSwipeDown();
-    }
-    window.removeEventListener('touchend', handleTouchEnd);
+  const endY = event.changedTouches[0].clientY;
+  const distance = endY - startY;
+  if (touchType === 'tap' && Math.abs(distance) < 50) {
+    startAudioOnInteraction(tapFlag);
+  } else if (touchType === 'hold' && tapFlag) {
+    startAudioOnInteraction(tapFlag);
+  } else if (distance < 0 && touchType !== 'hold') {
+    handleSwipeUp();
+  } else if (distance > 0 && touchType !== 'hold') {
+    handleSwipeDown();
   }
+  window.removeEventListener('touchend', handleTouchEnd);
+}
 
   const imageContainer = document.querySelector('.image-container');
   const audio = document.querySelector('.audio');
@@ -297,28 +358,46 @@ function handleTouchStart(event) {
 
   window.addEventListener('touchend', () => {
     currentImage.classList.remove('pause-animation');
-    audio.play();
   }, { once: true });
+
+  setTimeout(() => {
+    const touchEndTime = new Date().getTime();
+    if (touchEndTime - touchStartTime >= 300) {
+      touchType = 'hold';
+    } else {
+      touchType = 'tap';
+    }
+  }, 300);
 }
 
+
 window.addEventListener('load', () => {
-  loadStory(0);
-  playSlideshow();
-  document.querySelector('.image-container img').addEventListener('animationend', () => {
-    const audio = document.querySelector('.audio');
-    audio.pause();
-    audio.currentTime = 0;
-    if (isSlideshowPlaying) {
-      playSlideshow();
-    }
-  });
+    loadStory(0);
+    playSlideshow();
+    document.querySelector('.image-container img').addEventListener('animationend', () => {
+        const audio = document.querySelector('.audio');
+        audio.pause();
+        audio.currentTime = 0;
+        if (isSlideshowPlaying) {
+            playSlideshow();
+        }
+    });
+    let tapFlag = false;
+    window.addEventListener('touchstart', (event) => {
+        tapFlag = true;
+        handleTouchStart(event, tapFlag);
+    }, { passive: false, capture: true });
+    window.addEventListener('touchmove', () => {
+        tapFlag = false;
+    }, { passive: true });
 }, { passive: true });
 
-window.addEventListener('touchstart', handleTouchStart, { passive: false, capture: true });
 
-function startAudioOnInteraction() {
-  const audio = document.querySelector('.audio');
-  audio.play();
+function startAudioOnInteraction(tapFlag) {
+    if (tapFlag) {
+        const audio = document.querySelector('.audio');
+        audio.play();
+    }
 }
 
     </script>
