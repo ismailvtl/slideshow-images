@@ -39,19 +39,20 @@
             height: 100%;
             width: 100%;
             object-fit: cover;
+            transition: transform 1s;
         }
 
         .zoomIn {
-            animation: video-portrait 20s ease 0s 1 normal forwards;
+            animation: video-portrait 5s ease-out forwards;
         }
 
         @keyframes video-portrait {
             0% {
-                transform: scale(1);
+                transform: scale(1) rotate(1.5deg);
             }
-
             100% {
-                transform: scale(1.5);
+                opacity: 1;
+                transform: scale(1.5) rotate(-1.5deg);;
             }
         }
 
