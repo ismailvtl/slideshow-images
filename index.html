@@ -182,7 +182,7 @@
         }
 
 
-let currentStoryIndex = 0;
+        let currentStoryIndex = 0;
 let currentImageIndex = 0;
 let isSlideshowPlaying = false;
 let slideshowInterval;
@@ -226,6 +226,7 @@ function loadStory(storyIndex) {
   const audio = document.querySelector('.audio');
   audio.src = stories[`story${storyIndex + 1}`].audio;
   audio.play();
+  preloadImage(story[1].src);
 }
 
 function playSlideshow() {
@@ -241,6 +242,7 @@ function playSlideshow() {
     img.classList.add(story[currentImageIndex].effect);
     imageContainer.innerHTML = '';
     imageContainer.appendChild(img);
+    preloadImage(story[(currentImageIndex + 1) % story.length].src);
     currentImageIndex = (currentImageIndex + 1) % story.length;
     if (currentImageIndex === 0) {
       audio.src = stories[`story${currentStoryIndex + 1}`].audio;
