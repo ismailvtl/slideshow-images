@@ -42,7 +42,7 @@
         }
 
         .zoomIn {
-            animation: video-portrait 10s ease 0s 1 normal forwards;
+            animation: video-portrait 20s ease 0s 1 normal forwards;
         }
 
         @keyframes video-portrait {
@@ -182,120 +182,118 @@
         }
 
 
-        let currentStoryIndex = 0;
-        let currentImageIndex = 0;
-        let isSlideshowPlaying = false;
-        let slideshowInterval;
-        const preloadImages = {};
-        const preloadAudio = {};
+let currentStoryIndex = 0;
+let currentImageIndex = 0;
+let isSlideshowPlaying = false;
+let slideshowInterval;
+const preloadImages = {};
+const preloadAudio = {};
 
-        function preloadImage(src) {
-            if (!preloadImages[src]) {
-                preloadImages[src] = new Image();
-                preloadImages[src].src = src;
-            }
-        }
+function preloadImage(src) {
+  if (!preloadImages[src]) {
+    preloadImages[src] = new Image();
+    preloadImages[src].src = src;
+  }
+}
 
-        function preloadAudioFile(src) {
-            if (!preloadAudio[src]) {
-                preloadAudio[src] = new Audio();
-                preloadAudio[src].src = src;
-            }
-        }
+function preloadAudioFile(src) {
+  if (!preloadAudio[src]) {
+    preloadAudio[src] = new Audio();
+    preloadAudio[src].src = src;
+  }
+}
 
-        function preloadStory(story) {
-            for (let i = 0; i < story.length; i++) {
-                preloadImage(story[i].src);
-                preloadAudioFile(story[i].audio);
-            }
-        }
+function preloadStory(story) {
+  for (let i = 0; i < story.length; i++) {
+    preloadImage(story[i].src);
+    preloadAudioFile(story[i].audio);
+  }
+}
 
-        function loadStory(storyIndex) {
-            currentStoryIndex = storyIndex;
-            currentImageIndex = 0;
-            const story = stories[`story${storyIndex + 1}`].images;
-            preloadStory(story);
-            const imageContainer = document.querySelector('.image-container');
-            const img = document.createElement('img');
-            img.src = story[0].src;
-            img.classList.add(story[0].effect);
-            imageContainer.innerHTML = '';
-            imageContainer.appendChild(img);
-            clearInterval(slideshowInterval);
-            isSlideshowPlaying = false;
-            const audio = document.querySelector('.audio');
-            audio.src = stories[`story${storyIndex + 1}`].audio;
-            audio.play();
-        }
+function loadStory(storyIndex) {
+  currentStoryIndex = storyIndex;
+  currentImageIndex = 0;
+  const story = stories[`story${storyIndex + 1}`].images;
+  preloadStory(story);
+  const imageContainer = document.querySelector('.image-container');
+  const img = document.createElement('img');
+  img.src = story[0].src;
+  img.classList.add(story[0].effect);
+  imageContainer.innerHTML = '';
+  imageContainer.appendChild(img);
+  clearInterval(slideshowInterval);
+  isSlideshowPlaying = false;
+  const audio = document.querySelector('.audio');
+  audio.src = stories[`story${storyIndex + 1}`].audio;
+  audio.play();
+}
 
-        function playSlideshow() {
-            isSlideshowPlaying = true;
-            const story = stories[`story${currentStoryIndex + 1}`].images;
-            currentImageIndex = 1;
-            const audio = document.querySelector('.audio');
-            audio.play();
-            slideshowInterval = setInterval(() => {
-                const imageContainer = document.querySelector('.image-container');
-                const img = document.createElement('img');
-                img.src = story[currentImageIndex].src;
-                img.classList.add(story[currentImageIndex].effect);
-                imageContainer.innerHTML = '';
-                imageContainer.appendChild(img);
-                currentImageIndex = (currentImageIndex + 1) % story.length;
-                if (currentImageIndex === 0) {
-                    audio.src = stories[`story${currentStoryIndex + 1}`].audio;
-                    audio.play();
-                }
-            }, story[currentImageIndex].duration * 1000);
-        }
+function playSlideshow() {
+  isSlideshowPlaying = true;
+  const story = stories[`story${currentStoryIndex + 1}`].images;
+  currentImageIndex = 1;
+  const audio = document.querySelector('.audio');
+  audio.play();
+  slideshowInterval = setInterval(() => {
+    const imageContainer = document.querySelector('.image-container');
+    const img = document.createElement('img');
+    img.src = story[currentImageIndex].src;
+    img.classList.add(story[currentImageIndex].effect);
+    imageContainer.innerHTML = '';
+    imageContainer.appendChild(img);
+    currentImageIndex = (currentImageIndex + 1) % story.length;
+    if (currentImageIndex === 0) {
+      audio.src = stories[`story${currentStoryIndex + 1}`].audio;
+      audio.play();
+    }
+  }, story[currentImageIndex].duration * 1000);
+}
 
-        function handleSwipeUp() {
-            const nextStoryIndex = currentStoryIndex + 1;
-            if (nextStoryIndex < Object.keys(stories).length) {
-                loadStory(nextStoryIndex);
-                playSlideshow();
-            }
-        }
+function handleSwipeUp() {
+  const nextStoryIndex = currentStoryIndex + 1;
+  if (nextStoryIndex < Object.keys(stories).length) {
+    loadStory(nextStoryIndex);
+    playSlideshow();
+  }
+}
 
-        function handleSwipeDown() {
-            const prevStoryIndex = currentStoryIndex - 1;
-            if (prevStoryIndex >= 0) {
-                loadStory(prevStoryIndex);
-                playSlideshow();
-            }
-        }
+function handleSwipeDown() {
+  const prevStoryIndex = currentStoryIndex - 1;
+  if (prevStoryIndex >= 0) {
+    loadStory(prevStoryIndex);
+    playSlideshow();
+  }
+}
 
-        function handleTouchStart(event) {
-            const startY = event.touches[0].clientY;
-            event.preventDefault();
-            window.addEventListener('touchend', handleTouchEnd, { passive: false });
+function handleTouchStart(event) {
+  const startY = event.touches[0].clientY;
+  event.preventDefault();
+  window.addEventListener('touchend', handleTouchEnd, { passive: false });
 
-            function handleTouchEnd(event) {
-                const endY = event.changedTouches[0].clientY;
-                const distance = endY - startY;
-                if (distance < 0) {
-                    handleSwipeUp();
-                } else {
-                    handleSwipeDown();
-                }
-                window.removeEventListener('touchend', handleTouchEnd);
-            }
-        }
+  function handleTouchEnd(event) {
+    const endY = event.changedTouches[0].clientY;
+    const distance = endY - startY;
+    if (distance < 0) {
+      handleSwipeUp();
+    } else {
+      handleSwipeDown();
+    }
+    window.removeEventListener('touchend', handleTouchEnd);
+  }
+}
 
-        window.addEventListener('load', () => {
-            loadStory(0);
-            playSlideshow();
-        }, { passive: true });
+window.addEventListener('load', () => {
+  loadStory(0);
+  playSlideshow();
+}, { passive: true });
 
-        window.addEventListener('touchstart', handleTouchStart, { passive: false, capture: true });
+window.addEventListener('touchstart', handleTouchStart, { passive: false, capture: true });
 
 
-        function startAudioOnInteraction() {
-            const audio = document.querySelector('.audio');
-            audio.play();
-        }
-
-        window.addEventListener('click', startAudioOnInteraction);
+function startAudioOnInteraction() {
+  const audio = document.querySelector('.audio');
+  audio.play();
+}
 
     </script>
 </body>
