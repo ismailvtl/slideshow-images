@@ -81,9 +81,9 @@
             animation-play-state: paused;
         }
 
-        /* div#stories-container img:not(:first-child) {
+        div#stories-container img:not(:first-child) {
             display: none;
-        } */
+        }
     </style>
 </head>
 
@@ -219,68 +219,26 @@
             }
         }
 
-        /*function loadStory(storyIndex) {
-            currentStoryIndex = storyIndex;
-            currentImageIndex = 0;
-            const story = stories[`story${storyIndex + 1}`].images;
-            preloadStory(story);
-            const imageContainer = document.querySelector('.image-container');
-            const img = document.createElement('img');
-            img.src = story[0].src;
-            img.classList.add(story[0].effect);
-            imageContainer.innerHTML = '';
-            imageContainer.appendChild(img);
-            clearInterval(slideshowInterval);
-            isSlideshowPlaying = false;
-            const audio = document.querySelector('.audio');
-            audio.src = stories[`story${storyIndex + 1}`].audio;
-            audio.play();
-            preloadImage(story[1].src);
-        }*/
-
-        /*function loadStory(storyIndex) {
-            currentStoryIndex = storyIndex;
-            currentImageIndex = 0;
-            const story = stories[`story${storyIndex + 1}`].images;
-            preloadStory(story);
-
-            const imageContainer = document.querySelector('.image-container');
-            imageContainer.innerHTML = '';
-
-            for (let i = 0; i < story.length; i++) {
-                const img = document.createElement('img');
-                img.src = story[i].src;
-                img.classList.add(story[i].effect);
-                imageContainer.appendChild(img);
-            }
-
-            const audio = document.querySelector('.audio');
-            audio.src = stories[`story${storyIndex + 1}`].audio;
-            audio.play();
-
-            clearInterval(slideshowInterval);
-            isSlideshowPlaying = false;
-            preloadImage(story[1].src);
-        }*/
-
+    
         function loadStory(storyIndex) {
             currentStoryIndex = storyIndex;
             currentImageIndex = 0;
             const story = stories[`story${storyIndex + 1}`].images;
-            preloadStory(story);
 
             const imageContainer = document.querySelector('.image-container');
             imageContainer.innerHTML = '';
 
-            for (let i = 0; i < story.length; i++) {
-                const img = document.createElement('img');
-                img.src = story[i].src;
-                img.classList.add(story[i].effect);
-                if (i !== 0) {
-                    img.style.display = 'none';
-                }
-                imageContainer.appendChild(img);
+            const img = document.createElement('img');
+            img.classList.add(story[0].effect);
+            img.srcset = `${story[0].src} 1x`;
+
+            for (let i = 1; i < story.length; i++) {
+                const srcset = `${story[i].src} ${i + 1}x`;
+                img.srcset += `, ${srcset}`;
+                preloadImage(story[i].src);
             }
+
+            imageContainer.appendChild(img);
 
             const audio = document.querySelector('.audio');
             audio.src = stories[`story${storyIndex + 1}`].audio;
@@ -288,8 +246,8 @@
 
             clearInterval(slideshowInterval);
             isSlideshowPlaying = false;
-            preloadImage(story[1].src);
         }
+
 
         function playSlideshow() {
             isSlideshowPlaying = true;
