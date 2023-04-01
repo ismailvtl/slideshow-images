@@ -80,6 +80,10 @@
         .pause-animation {
             animation-play-state: paused;
         }
+
+        /* div#stories-container img:not(:first-child) {
+            display: none;
+        } */
     </style>
 </head>
 
@@ -215,7 +219,7 @@
             }
         }
 
-        function loadStory(storyIndex) {
+        /*function loadStory(storyIndex) {
             currentStoryIndex = storyIndex;
             currentImageIndex = 0;
             const story = stories[`story${storyIndex + 1}`].images;
@@ -231,6 +235,59 @@
             const audio = document.querySelector('.audio');
             audio.src = stories[`story${storyIndex + 1}`].audio;
             audio.play();
+            preloadImage(story[1].src);
+        }*/
+
+        /*function loadStory(storyIndex) {
+            currentStoryIndex = storyIndex;
+            currentImageIndex = 0;
+            const story = stories[`story${storyIndex + 1}`].images;
+            preloadStory(story);
+
+            const imageContainer = document.querySelector('.image-container');
+            imageContainer.innerHTML = '';
+
+            for (let i = 0; i < story.length; i++) {
+                const img = document.createElement('img');
+                img.src = story[i].src;
+                img.classList.add(story[i].effect);
+                imageContainer.appendChild(img);
+            }
+
+            const audio = document.querySelector('.audio');
+            audio.src = stories[`story${storyIndex + 1}`].audio;
+            audio.play();
+
+            clearInterval(slideshowInterval);
+            isSlideshowPlaying = false;
+            preloadImage(story[1].src);
+        }*/
+
+        function loadStory(storyIndex) {
+            currentStoryIndex = storyIndex;
+            currentImageIndex = 0;
+            const story = stories[`story${storyIndex + 1}`].images;
+            preloadStory(story);
+
+            const imageContainer = document.querySelector('.image-container');
+            imageContainer.innerHTML = '';
+
+            for (let i = 0; i < story.length; i++) {
+                const img = document.createElement('img');
+                img.src = story[i].src;
+                img.classList.add(story[i].effect);
+                if (i !== 0) {
+                    img.style.display = 'none';
+                }
+                imageContainer.appendChild(img);
+            }
+
+            const audio = document.querySelector('.audio');
+            audio.src = stories[`story${storyIndex + 1}`].audio;
+            audio.play();
+
+            clearInterval(slideshowInterval);
+            isSlideshowPlaying = false;
             preloadImage(story[1].src);
         }
 
@@ -273,36 +330,49 @@
         }
 
 
-      /* function handleTouchStart(event) {
-          const startY = event.touches[0].clientY;
-          event.preventDefault();
-          window.addEventListener('touchend', handleTouchEnd, { passive: false });
-        
-          function handleTouchEnd(event) {
-            const endY = event.changedTouches[0].clientY;
-            const distance = endY - startY;
-            if (distance < 0) {
-              handleSwipeUp();
-            } else {
-              handleSwipeDown();
+        function handleTouchStart(event, tapFlag) {
+            const startY = event.touches[0].clientY;
+            const touchStartTime = new Date().getTime();
+            let touchType = '';
+
+            event.preventDefault();
+            window.addEventListener('touchend', handleTouchEnd, { passive: false });
+
+            function handleTouchEnd(event) {
+                const endY = event.changedTouches[0].clientY;
+                const distance = endY - startY;
+                if (touchType === 'tap' && Math.abs(distance) < 50) {
+                    startAudioOnInteraction(tapFlag);
+                } else if (touchType === 'hold' && tapFlag) {
+                    startAudioOnInteraction(tapFlag);
+                } else if (distance < 0 && touchType !== 'hold') {
+                    handleSwipeUp();
+                } else if (distance > 0 && touchType !== 'hold') {
+                    handleSwipeDown();
+                }
+                window.removeEventListener('touchend', handleTouchEnd);
             }
-            window.removeEventListener('touchend', handleTouchEnd);
-          }
-        
-          const imageContainer = document.querySelector('.image-container');
-          const audio = document.querySelector('.audio');
-          const currentImage = imageContainer.querySelector('img');
-          const currentEffect = currentImage.classList[0];
-          currentImage.classList.add('pause-animation');
-          audio.pause();
-        
-          window.addEventListener('touchend', () => {
-            currentImage.classList.remove('pause-animation');
-            audio.play();
-          }, { once: true });
+
+            const imageContainer = document.querySelector('.image-container');
+            const audio = document.querySelector('.audio');
+            const currentImage = imageContainer.querySelector('img');
+            const currentEffect = currentImage.classList[0];
+            currentImage.classList.add('pause-animation');
+            audio.pause();
+
+            window.addEventListener('touchend', () => {
+                currentImage.classList.remove('pause-animation');
+            }, { once: true });
+
+            setTimeout(() => {
+                const touchEndTime = new Date().getTime();
+                if (touchEndTime - touchStartTime >= 300) {
+                    touchType = 'hold';
+                } else {
+                    touchType = 'tap';
+                }
+            }, 300);
         }
-
-
 
 
         window.addEventListener('load', () => {
@@ -316,89 +386,23 @@
                     playSlideshow();
                 }
             });
+            let tapFlag = false;
+            window.addEventListener('touchstart', (event) => {
+                tapFlag = true;
+                handleTouchStart(event, tapFlag);
+            }, { passive: false, capture: true });
+            window.addEventListener('touchmove', () => {
+                tapFlag = false;
+            }, { passive: true });
         }, { passive: true });
 
-        window.addEventListener('touchstart', handleTouchStart, { passive: false, capture: true });
 
-        function startAudioOnInteraction() {
-            const audio = document.querySelector('.audio');
-            audio.play();
-        }*/  
-
-
-function handleTouchStart(event, tapFlag) {
-  const startY = event.touches[0].clientY;
-  const touchStartTime = new Date().getTime();
-  let touchType = '';
-
-  event.preventDefault();
-  window.addEventListener('touchend', handleTouchEnd, { passive: false });
-
-  function handleTouchEnd(event) {
-  const endY = event.changedTouches[0].clientY;
-  const distance = endY - startY;
-  if (touchType === 'tap' && Math.abs(distance) < 50) {
-    startAudioOnInteraction(tapFlag);
-  } else if (touchType === 'hold' && tapFlag) {
-    startAudioOnInteraction(tapFlag);
-  } else if (distance < 0 && touchType !== 'hold') {
-    handleSwipeUp();
-  } else if (distance > 0 && touchType !== 'hold') {
-    handleSwipeDown();
-  }
-  window.removeEventListener('touchend', handleTouchEnd);
-}
-
-  const imageContainer = document.querySelector('.image-container');
-  const audio = document.querySelector('.audio');
-  const currentImage = imageContainer.querySelector('img');
-  const currentEffect = currentImage.classList[0];
-  currentImage.classList.add('pause-animation');
-  audio.pause();
-
-  window.addEventListener('touchend', () => {
-    currentImage.classList.remove('pause-animation');
-  }, { once: true });
-
-  setTimeout(() => {
-    const touchEndTime = new Date().getTime();
-    if (touchEndTime - touchStartTime >= 300) {
-      touchType = 'hold';
-    } else {
-      touchType = 'tap';
-    }
-  }, 300);
-}
-
-
-window.addEventListener('load', () => {
-    loadStory(0);
-    playSlideshow();
-    document.querySelector('.image-container img').addEventListener('animationend', () => {
-        const audio = document.querySelector('.audio');
-        audio.pause();
-        audio.currentTime = 0;
-        if (isSlideshowPlaying) {
-            playSlideshow();
+        function startAudioOnInteraction(tapFlag) {
+            if (tapFlag) {
+                const audio = document.querySelector('.audio');
+                audio.play();
+            }
         }
-    });
-    let tapFlag = false;
-    window.addEventListener('touchstart', (event) => {
-        tapFlag = true;
-        handleTouchStart(event, tapFlag);
-    }, { passive: false, capture: true });
-    window.addEventListener('touchmove', () => {
-        tapFlag = false;
-    }, { passive: true });
-}, { passive: true });
-
-
-function startAudioOnInteraction(tapFlag) {
-    if (tapFlag) {
-        const audio = document.querySelector('.audio');
-        audio.play();
-    }
-}
 
     </script>
 </body>
