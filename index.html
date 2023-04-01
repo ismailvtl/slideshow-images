@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Higlights - POC - Experiments</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 100vw;
+            height: 100vh;
+            max-width: 767px;
+            margin: auto;
+        }
+
+        body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-container {
+            height: 100%;
+            width: 100%;
+            background-color: grey;
+            overflow: hidden;
+        }
+
+        .image-container img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .zoomIn {
+            animation: video-portrait 20s ease 0s 1 normal forwards;
+        }
+
+        @keyframes video-portrait {
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(1.5);
+            }
+        }
+
+        audio {
+            position: absolute;
+            top: 26px;
+            left: 50%;
+            transform: translate(-50%);
+            width: 85%;
+            opacity: 0.4;
+        }
+
+        span.scrolltext {
+    font-size: 30px;
+    z-index: 3;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    opacity: .6;
+    font-family: 'system-ui, sans-serif';
+    left: 50%;
+    transform: translate(-50%);
+}
+    </style>
+</head>
+
+<body>
+    <div class="container" id="story-container">
+        <div class="image-container" id="stories-container"></div>
+        <audio class="audio" loop controls autoplay></audio>
+        <span class="scrolltext">SCROLL UP/DOWN</span>
+    </div>
+    <script>
+
+        let images = [{
+            src: 'https://assets.wasalt.com/properties/54766/images/ed05c57c-367a-48f1-a9d0-85330a573070.jpg?q=75',
+            duration: '2',
+            effect: 'zoomIn'
+        },
+        {
+            src: 'https://assets.wasalt.com/properties/54766/images/e4b6e14b-4d69-4104-acee-481a28a7cd39.jpg?q=75?quality=60',
+            duration: '2',
+            effect: 'zoomIn'
+        },
+        {
+            src: 'https://assets.wasalt.com/properties/54766/images/e172dc54-5ad6-4282-b8f9-9989dd005855.jpg?q=75?quality=60',
+            duration: '5',
+            effect: 'zoomIn'
+        },
+        {
+            src: 'https://assets.wasalt.com/properties/54766/images/d99771ee-d8de-4ebd-981c-e5461e515baa.jpg?q=75',
+            duration: '5',
+            effect: 'zoomIn'
+        },
+        {
+            src: 'https://assets.wasalt.com/properties/54766/images/8253fd71-c00e-4f84-a24d-00486263cb85.jpg?q=75?quality=60',
+            duration: '5',
+            effect: 'zoomIn'
+        }];
+
+
+
+        let stories = {
+            "story1":
+            {
+                "audio": "story1.mp3",
+                "images": [
+                    {
+                        "src": "https://assets.wasalt.com/properties/54766/images/ed05c57c-367a-48f1-a9d0-85330a573070.jpg?q=75",
+                        "duration": "5",
+                        "effect": "zoomIn"
+                    },
+                    {
+                        "src": "https://assets.wasalt.com/properties/54766/images/e4b6e14b-4d69-4104-acee-481a28a7cd39.jpg?q=75?quality=60",
+                        "duration": "5",
+                        "effect": "zoomIn"
+                    },
+                    {
+                        "src": "https://assets.wasalt.com/properties/54766/images/e172dc54-5ad6-4282-b8f9-9989dd005855.jpg?q=75?quality=60",
+                        "duration": "5",
+                        "effect": "zoomIn"
+                    },
+                    {
+                        "src": "https://assets.wasalt.com/properties/54766/images/d99771ee-d8de-4ebd-981c-e5461e515baa.jpg?q=75",
+                        "duration": "5",
+                        "effect": "zoomIn"
+                    },
+                    {
+                        "src": "https://assets.wasalt.com/properties/54766/images/8253fd71-c00e-4f84-a24d-00486263cb85.jpg?q=75?quality=60",
+                        "duration": "5",
+                        "effect": "zoomIn"
+                    }
+                ]
+
+            },
+            "story2":
+            {
+                "audio": "story2.mp3",
+                "images": [
+                    {
+                        "src": "https://assets.wasalt.com/properties/99301/images/e852c49a-a61a-412b-ac04-870596d07113.jpg?q=75",
+                        "duration": "5",
+                        "effect": "zoomIn"
+                    },
+                    {
+                        "src": "https://assets.wasalt.com/properties/99301/images/c2906a95-e5e1-4e86-9f02-4f3caff2566d.jpg?q=75",
+                        "duration": "5",
+                        "effect": "zoomIn"
+                    },
+                    {
+                        "src": "https://assets.wasalt.com/properties/99301/images/e1cad88c-c9e2-4b07-900b-bd51534963d5.jpg?q=75?quality=60",
+                        "duration": "5",
+                        "effect": "zoomIn"
+                    },
+                    {
+                        "src": "https://assets.wasalt.com/properties/99301/images/8f87fc29-2273-40da-a182-904b6091e714.jpg?q=75",
+                        "duration": "5",
+                        "effect": "zoomIn"
+                    },
+                    {
+                        "src": "https://assets.wasalt.com/properties/99301/images/4cfb2879-3eda-41e9-a73d-2c20fed22a61.jpg?q=75?quality=60",
+                        "duration": "5",
+                        "effect": "zoomIn"
+                    }
+                ]
+            }
+
+        }
+
+
+        let currentStoryIndex = 0;
+        let currentImageIndex = 0;
+        let isSlideshowPlaying = false;
+        let slideshowInterval;
+        const preloadImages = {};
+        const preloadAudio = {};
+
+        function preloadImage(src) {
+            if (!preloadImages[src]) {
+                preloadImages[src] = new Image();
+                preloadImages[src].src = src;
+            }
+        }
+
+        function preloadAudioFile(src) {
+            if (!preloadAudio[src]) {
+                preloadAudio[src] = new Audio();
+                preloadAudio[src].src = src;
+            }
+        }
+
+        function preloadStory(story) {
+            for (let i = 0; i < story.length; i++) {
+                preloadImage(story[i].src);
+                preloadAudioFile(story[i].audio);
+            }
+        }
+
+        function loadStory(storyIndex) {
+            currentStoryIndex = storyIndex;
+            currentImageIndex = 0;
+            const story = stories[`story${storyIndex + 1}`].images;
+            preloadStory(story);
+            const imageContainer = document.querySelector('.image-container');
+            const img = document.createElement('img');
+            img.src = story[0].src;
+            img.classList.add(story[0].effect);
+            imageContainer.innerHTML = '';
+            imageContainer.appendChild(img);
+            clearInterval(slideshowInterval);
+            isSlideshowPlaying = false;
+            const audio = document.querySelector('.audio');
+            audio.src = stories[`story${storyIndex + 1}`].audio;
+            audio.play();
+        }
+
+        function playSlideshow() {
+            isSlideshowPlaying = true;
+            const story = stories[`story${currentStoryIndex + 1}`].images;
+            currentImageIndex = 1;
+            const audio = document.querySelector('.audio');
+            audio.play();
+            slideshowInterval = setInterval(() => {
+                const imageContainer = document.querySelector('.image-container');
+                const img = document.createElement('img');
+                img.src = story[currentImageIndex].src;
+                img.classList.add(story[currentImageIndex].effect);
+                imageContainer.innerHTML = '';
+                imageContainer.appendChild(img);
+                currentImageIndex = (currentImageIndex + 1) % story.length;
+                if (currentImageIndex === 0) {
+                    audio.src = stories[`story${currentStoryIndex + 1}`].audio;
+                    audio.play();
+                }
+            }, story[currentImageIndex].duration * 1000);
+        }
+
+        function handleSwipeUp() {
+            const nextStoryIndex = currentStoryIndex + 1;
+            if (nextStoryIndex < Object.keys(stories).length) {
+                loadStory(nextStoryIndex);
+                playSlideshow();
+            }
+        }
+
+        function handleSwipeDown() {
+            const prevStoryIndex = currentStoryIndex - 1;
+            if (prevStoryIndex >= 0) {
+                loadStory(prevStoryIndex);
+                playSlideshow();
+            }
+        }
+
+        function handleTouchStart(event) {
+            const startY = event.touches[0].clientY;
+            event.preventDefault();
+            window.addEventListener('touchend', handleTouchEnd, { passive: false });
+
+            function handleTouchEnd(event) {
+                const endY = event.changedTouches[0].clientY;
+                const distance = endY - startY;
+                if (distance < 0) {
+                    handleSwipeUp();
+                } else {
+                    handleSwipeDown();
+                }
+                window.removeEventListener('touchend', handleTouchEnd);
+            }
+        }
+
+        window.addEventListener('load', () => {
+            loadStory(0);
+            playSlideshow();
+        }, { passive: true });
+
+        window.addEventListener('touchstart', handleTouchStart, { passive: false, capture: true });
+
+
+        function startAudioOnInteraction() {
+            const audio = document.querySelector('.audio');
+            audio.play();
+        }
+
+        window.addEventListener('click', startAudioOnInteraction);
+
+    </script>
+</body>
+
+</html>
